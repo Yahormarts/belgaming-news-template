@@ -12,7 +12,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
 main{max-width:1000px;margin:0 auto;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
-@media(max-width:780px){main{grid-template-columns:1fr}}
+@media(max-width:780px){main{grid-template-columns:1fr;padding:10px;gap:12px}.stage{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:6px;min-height:0}canvas{max-height:42vh}.panel{padding-bottom:48px}button{min-height:44px}input[type=range]{height:34px}input[type=color]{width:44px;height:36px}}
 h1{margin:0;font-size:22px}
 .stage{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;justify-content:center;align-items:center;min-height:240px}
 canvas{display:block;max-width:100%;max-height:75vh;width:auto;height:auto;border-radius:6px}
@@ -93,7 +93,7 @@ function render(){
   px=Math.min(1-mx,Math.max(mx,px));py=Math.min(1-my,Math.max(my,py));
   ctx.globalAlpha=op;ctx.drawImage(wm,px*cv.width-w/2,py*cv.height-h/2,w,h);ctx.globalAlpha=1;
   if(ui&&img){
-    ctx.save();ctx.setLineDash([8,6]);ctx.lineWidth=Math.max(2,cv.width/400);ctx.strokeStyle='#e6207f';
+    ctx.save();const u=cv.width/cv.getBoundingClientRect().width;ctx.setLineDash([6*u,4*u]);ctx.lineWidth=2*u;ctx.strokeStyle='#e6207f';
     if(rect)ctx.strokeRect(rect.x0,rect.y0,rect.x1-rect.x0,rect.y1-rect.y0);
     if(tab==='t'&&sel&&sel.bb)ctx.strokeRect(sel.bb.x,sel.bb.y,sel.bb.w,sel.bb.h);
     ctx.restore();
@@ -150,7 +150,7 @@ cv.onpointerdown=e=>{
   if(!img)return;cv.setPointerCapture(e.pointerId);const p=pt(e);
   if(tab==='e')rect={x0:p.x,y0:p.y,x1:p.x,y1:p.y};
   else if(tab==='t'){
-    const h=[...T].reverse().find(b=>b.bb&&p.x>=b.bb.x&&p.x<=b.bb.x+b.bb.w&&p.y>=b.bb.y&&p.y<=b.bb.y+b.bb.h);
+    const q=16*cv.width/cv.getBoundingClientRect().width;const h=[...T].reverse().find(b=>b.bb&&p.x>=b.bb.x-q&&p.x<=b.bb.x+b.bb.w+q&&p.y>=b.bb.y-q&&p.y<=b.bb.y+b.bb.h+q);
     sel=h||null;loadUI();if(h)drag={p,x:h.x,y:h.y};render();
   } else drag={p,x:px,y:py};
 };
